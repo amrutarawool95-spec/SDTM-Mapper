@@ -1,0 +1,30 @@
+ex_rows = []
+
+for _, subject in dm_raw.iterrows():
+
+    baseline = pd.to_datetime(
+        subject["ICF_DATE"]
+    ) + timedelta(days=1)
+
+    end = baseline + timedelta(days=84)
+
+    ex_rows.append({
+        "SUBJID": subject["SUBJID"],
+        "TREATMENT": random.choice([
+            "ACTIVE",
+            "PLACEBO"
+        ]),
+        "DOSE": 10,
+        "UNIT": "mg",
+        "FREQUENCY": "QD",
+        "ROUTE": "ORAL",
+        "START_DATE": baseline,
+        "END_DATE": end
+    })
+
+ex_raw = pd.DataFrame(ex_rows)
+
+ex_raw.to_csv(
+    "data/raw/exposure.csv",
+    index=False
+)
