@@ -1,0 +1,46 @@
+ae_terms = [
+    "Headache",
+    "Dizziness",
+    "Nausea",
+    "Fatigue",
+    "Peripheral edema",
+    "Cough"
+]
+
+ae_rows = []
+
+for _, subject in dm_raw.iterrows():
+
+    if random.random() < 0.35:
+
+        start = (
+            pd.to_datetime(subject["ICF_DATE"])
+            + timedelta(days=random.randint(5, 60))
+        )
+
+        end = start + timedelta(
+            days=random.randint(1, 10)
+        )
+
+        ae_rows.append({
+            "SUBJID": subject["SUBJID"],
+            "AE_TERM": random.choice(ae_terms),
+            "START_DATE": start,
+            "END_DATE": end,
+            "SEVERITY": random.choice([
+                "Mild",
+                "Moderate",
+                "Severe"
+            ]),
+            "RELATED": random.choice([
+                "Yes",
+                "No"
+            ])
+        })
+
+ae_raw = pd.DataFrame(ae_rows)
+
+ae_raw.to_csv(
+    "data/raw/adverse_events.csv",
+    index=False
+)
