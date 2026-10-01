@@ -1,0 +1,89 @@
+lb_raw = pd.read_csv(
+    "data/raw/labs.csv",
+    parse_dates=["LB_DATE"]
+)
+
+lb = lb_raw.merge(
+    dm[
+        ["SUBJID", "USUBJID", "RFSTDTC"]
+    ],
+    on="SUBJID",
+    how="left"
+)
+
+lb["STUDYID"] = STUDYID
+lb["DOMAIN"] = "LB"
+
+lb["LBTESTCD"] = lb["TESTCD"]
+lb["LBTEST"] = lb["TEST"]
+
+lb["LBCAT"] = "CHEMISTRY"
+
+lb["LBORRES"] = (
+    lb["RESULT"].astype(str)
+)
+
+lb["LBORRESU"] = lb["UNIT"]
+
+lb["LBSTRESC"] = (
+    lb["RESULT"].astype(str)
+)
+
+lb["LBSTRESN"] = pd.to_numeric(
+    lb["RESULT"],
+    errors="coerce"
+)
+
+lb["LBSTRESU"] = lb["UNIT"]
+
+lb["LBSPEC"] = (
+    lb["SPECIMEN"].str.upper()
+)
+
+lb["LBDTC"] = lb[
+    "LB_DATE"
+].apply(iso_date)
+
+lb["VISITDY"] = lb.apply(
+    lambda r: study_day(
+        r["LB_DATE"],
+        r["RFSTDTC"]
+    ),
+    axis=1
+)
+
+lb = lb.sort_values(
+    ["USUBJID", "LB_DATE", "LBTESTCD"]
+)
+
+lb["LBSEQ"] = (
+    lb.groupby("USUBJID")
+    .cumcount() + 1
+)
+
+lb = lb[
+    [
+        "STUDYID",
+        "DOMAIN",
+        "USUBJID",
+        "LBSEQ",
+        "LBTESTCD",
+        "LBTEST",
+        "LBCAT",
+        "LBORRES",
+        "LBORRESU",
+        "LBSTRESC",
+        "LBSTRESN",
+        "LBSTRESU",
+        "LBSPEC",
+        "VISITNUM",
+        "VISIT",
+        "VISITDY",
+        "LBDTC"
+    ]
+]
+
+lb.to_csv(
+    "data/sdtm/lb.csv",
+    index=False
+)
