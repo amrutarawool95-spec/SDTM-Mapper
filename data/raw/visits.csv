@@ -1,0 +1,28 @@
+visit_rows = []
+
+for _, subject in dm_raw.iterrows():
+
+    consent = pd.to_datetime(
+        subject["ICF_DATE"]
+    )
+
+    for visit, offset in VISITS.items():
+
+        visit_date = consent + timedelta(
+            days=offset
+        )
+
+        visit_rows.append({
+            "SUBJID": subject["SUBJID"],
+            "SITEID": subject["SITEID"],
+            "VISIT": visit,
+            "VISITNUM": list(VISITS.keys()).index(visit) + 1,
+            "VISIT_DATE": visit_date
+        })
+
+visits_raw = pd.DataFrame(visit_rows)
+
+visits_raw.to_csv(
+    "data/raw/visits.csv",
+    index=False
+)
