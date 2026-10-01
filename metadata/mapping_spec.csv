@@ -1,0 +1,44 @@
+Domain,Source Variable,Target Variable,Derivation Logic,Controlled Terminology,Notes
+DM,SUBJID,SUBJID,Source subject identifier,None,Preserve source subject ID
+DM,SITEID,SITEID,Source site identifier,None,Study site
+DM,SUBJID,USUBJID,STUDYID-SITEID-SUBJID,None,Unique subject identifier
+DM,SEX_RAW,SEX,Map Male/Female to M/F,SEX,Controlled terminology
+DM,RACE_RAW,RACE,Map source race to CDISC value,RACE,Verify against current CT
+DM,ETHNIC_RAW,ETHNIC,Map source ethnicity,ETHNICITY,Verify against current CT
+DM,BRTHDAT,BRTHDTC,Convert date to ISO 8601,None,ISO 8601
+DM,ICF_DATE,RFXSTDTC,First treatment exposure date,None,Derived from exposure
+AE,SUBJID,USUBJID,STUDYID-SITEID-SUBJID,None,Cross-form derivation
+AE,AE_TERM,AETERM,Preserve reported term,None,Verbatim term
+AE,AE_TERM,AEDECOD,Map to simplified coding dictionary,None,Not MedDRA
+AE,SEVERITY,AESEV,Map severity,AESEV,Controlled terminology
+AE,START_DATE,AESTDTC,Convert to ISO 8601,None,ISO 8601
+AE,END_DATE,AEENDTC,Convert to ISO 8601,None,ISO 8601
+VS,TEST,VSTESTCD,Map test name to CDISC test code,VS TEST,Controlled terminology
+VS,TEST,VSTEST,Map test name to standard test,None,Standardized test
+VS,RESULT,VSORRES,Preserve collected result,None,Original result
+VS,UNIT,VSORRESU,Preserve collected unit,Units,Original unit
+VS,RESULT,VSSTRESN,Convert result to numeric,None,Standardized numeric result
+VS,UNIT,VSSTRESU,Standardize unit,Units,Standardized unit
+VS,VS_DATE,VSDTC,Convert date to ISO 8601,None,ISO 8601
+LB,TESTCD,LBTESTCD,Source test code,None,Standard test code
+LB,TEST,LBTEST,Source test name,None,Standard test name
+LB,RESULT,LBORRES,Preserve original result,None,Original result
+LB,UNIT,LBORRESU,Preserve original unit,Units,Original unit
+LB,RESULT,LBSTRESN,Convert result to numeric,None,Standardized numeric result
+LB,UNIT,LBSTRESU,Standardize unit,Units,Standardized unit
+LB,SPECIMEN,LBSPEC,Map specimen,Specimen,Controlled terminology where applicable
+LB,LB_DATE,LBDTC,Convert to ISO 8601,None,ISO 8601
+CM,MEDICATION,CMTRT,Preserve medication name,None,Verbatim medication
+CM,DOSE,CMDOSE,Numeric dose,None,Dose
+CM,UNIT,CMDOSU,Medication dose unit,Units,Controlled/standard unit
+CM,FREQUENCY,CMDOSFRQ,Map dosing frequency,None,Standard frequency
+CM,ROUTE,CMROUTE,Map route,ROUTE,Controlled terminology
+CM,START_DATE,CMSTDTC,Convert to ISO 8601,None,ISO 8601
+CM,END_DATE,CMENDTC,Convert to ISO 8601,None,ISO 8601
+EX,TREATMENT,EXTRT,Study treatment,None,Protocol-defined treatment
+EX,DOSE,EXDOSE,Numeric dose,None,Dose
+EX,UNIT,EXDOSU,Dose unit,Units,Standard unit
+EX,FREQUENCY,EXDOSFRQ,Dosing frequency,None,Standard frequency
+EX,ROUTE,EXROUTE,Administration route,ROUTE,Controlled terminology
+EX,START_DATE,EXSTDTC,Convert to ISO 8601,None,ISO 8601
+EX,END_DATE,EXENDTC,Convert to ISO 8601,None,ISO 8601
