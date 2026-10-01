@@ -1,0 +1,44 @@
+subjects = []
+
+for i in range(1, N_SUBJECTS + 1):
+
+    site = random.choice(SITES)
+
+    subjid = f"{i:04d}"
+
+    consent_date = fake.date_between(
+        start_date="-2y",
+        end_date="-1y"
+    )
+
+    birth_date = fake.date_between(
+        start_date="-75y",
+        end_date="-18y"
+    )
+
+    subjects.append({
+        "SUBJID": subjid,
+        "SITEID": site,
+        "SEX_RAW": random.choice(["Male", "Female"]),
+        "RACE_RAW": random.choice([
+            "White",
+            "Black or African American",
+            "Asian",
+            "Other"
+        ]),
+        "ETHNIC_RAW": random.choice([
+            "Hispanic or Latino",
+            "Not Hispanic or Latino"
+        ]),
+        "BRTHDAT": birth_date,
+        "ICF_DATE": consent_date
+    })
+
+dm_raw = pd.DataFrame(subjects)
+
+dm_raw.to_csv(
+    "data/raw/demographics.csv",
+    index=False
+)
+
+print("Subjects:", len(dm_raw))
