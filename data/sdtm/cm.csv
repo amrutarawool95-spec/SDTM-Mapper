@@ -1,0 +1,68 @@
+cm_raw = pd.read_csv(
+    "data/raw/conmeds.csv",
+    parse_dates=[
+        "START_DATE",
+        "END_DATE"
+    ]
+)
+
+cm = cm_raw.merge(
+    dm[
+        ["SUBJID", "USUBJID"]
+    ],
+    on="SUBJID",
+    how="left"
+)
+
+cm["STUDYID"] = STUDYID
+cm["DOMAIN"] = "CM"
+
+cm["CMTRT"] = (
+    cm["MEDICATION"].str.upper()
+)
+
+cm["CMDOSE"] = cm["DOSE"]
+
+cm["CMDOSU"] = cm["UNIT"]
+
+cm["CMDOSFRQ"] = cm["FREQUENCY"]
+
+cm["CMROUTE"] = cm["ROUTE"]
+
+cm["CMSTDTC"] = cm[
+    "START_DATE"
+].apply(iso_date)
+
+cm["CMENDTC"] = cm[
+    "END_DATE"
+].apply(iso_date)
+
+cm = cm.sort_values(
+    ["USUBJID", "START_DATE"]
+)
+
+cm["CMSEQ"] = (
+    cm.groupby("USUBJID")
+    .cumcount() + 1
+)
+
+cm = cm[
+    [
+        "STUDYID",
+        "DOMAIN",
+        "USUBJID",
+        "CMSEQ",
+        "CMTRT",
+        "CMDOSE",
+        "CMDOSU",
+        "CMDOSFRQ",
+        "CMROUTE",
+        "CMSTDTC",
+        "CMENDTC"
+    ]
+]
+
+cm.to_csv(
+    "data/sdtm/cm.csv",
+    index=False
+)
