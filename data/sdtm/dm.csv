@@ -1,0 +1,66 @@
+dm_raw = pd.read_csv(
+    "data/raw/demographics.csv",
+    parse_dates=["BRTHDAT", "ICF_DATE"]
+)
+
+ex_raw = pd.read_csv(
+    "data/raw/exposure.csv",
+    parse_dates=["START_DATE", "END_DATE"]
+)
+
+dm = dm_raw.copy()
+
+dm["STUDYID"] = STUDYID
+dm["DOMAIN"] = "DM"
+
+dm["USUBJID"] = (
+    dm["STUDYID"]
+    + "-"
+    + dm["SITEID"]
+    + "-"
+    + dm["SUBJID"]
+)
+
+dm["SEX"] = dm["SEX_RAW"].map({
+    "Male": "M",
+    "Female": "F"
+})
+
+dm["RACE"] = dm["RACE_RAW"].str.upper()
+
+dm["ETHNIC"] = dm[
+    "ETHNIC_RAW"
+].str.upper()
+
+dm["BRTHDTC"] = dm[
+    "BRTHDAT"
+].apply(iso_date)
+
+dm["RFSTDTC"] = (
+    ex_raw
+    .groupby("SUBJID")["START_DATE"]
+    .min()
+    .reindex(dm["SUBJID"])
+    .apply(iso_date)
+    .values
+)
+
+dm = dm[
+    [
+        "STUDYID",
+        "DOMAIN",
+        "USUBJID",
+        "SUBJID",
+        "RFSTDTC",
+        "BRTHDTC",
+        "SITEID",
+        "SEX",
+        "RACE",
+        "ETHNIC"
+    ]
+]
+
+dm.to_csv(
+    "data/sdtm/dm.csv",
+    index=False
+)
