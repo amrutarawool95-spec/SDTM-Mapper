@@ -1,0 +1,100 @@
+vs_raw = pd.read_csv(
+    "data/raw/vitals.csv",
+    parse_dates=["VS_DATE"]
+)
+
+usubjid_map = dm[
+    ["SUBJID", "USUBJID", "RFSTDTC"]
+]
+
+vs = vs_raw.merge(
+    usubjid_map,
+    on="SUBJID",
+    how="left"
+)
+
+test_map = {
+    "Systolic Blood Pressure":
+        ("SYSBP", "SYSTOLIC BLOOD PRESSURE"),
+
+    "Diastolic Blood Pressure":
+        ("DIABP", "DIASTOLIC BLOOD PRESSURE"),
+
+    "Pulse Rate":
+        ("PULSE", "PULSE RATE"),
+
+    "Weight":
+        ("WEIGHT", "WEIGHT")
+}
+
+vs["VSTESTCD"] = vs["TEST"].map(
+    lambda x: test_map[x][0]
+)
+
+vs["VSTEST"] = vs["TEST"].map(
+    lambda x: test_map[x][1]
+)
+
+vs["VSORRES"] = (
+    vs["RESULT"]
+    .astype(str)
+)
+
+vs["VSORRESU"] = vs["UNIT"]
+
+vs["VSSTRESC"] = vs["RESULT"].astype(str)
+
+vs["VSSTRESN"] = pd.to_numeric(
+    vs["RESULT"],
+    errors="coerce"
+)
+
+vs["VSSTRESU"] = vs["UNIT"]
+
+vs["VSDTC"] = vs[
+    "VS_DATE"
+].apply(iso_date)
+
+vs["VISITDY"] = vs.apply(
+    lambda r: study_day(
+        r["VS_DATE"],
+        r["RFSTDTC"]
+    ),
+    axis=1
+)
+
+vs["DOMAIN"] = "VS"
+
+vs = vs.sort_values(
+    ["USUBJID", "VS_DATE", "VSTESTCD"]
+)
+
+vs["VSSEQ"] = (
+    vs.groupby("USUBJID")
+    .cumcount() + 1
+)
+
+vs = vs[
+    [
+        "STUDYID",
+        "DOMAIN",
+        "USUBJID",
+        "VSSEQ",
+        "VSTESTCD",
+        "VSTEST",
+        "VSORRES",
+        "VSORRESU",
+        "VSSTRESC",
+        "VSSTRESN",
+        "VSSTRESU",
+        "VISITNUM",
+        "VISIT",
+        "VISITDY",
+        "VSDTC"
+    ]
+]
+
+vs.to_csv(
+    "data/sdtm/vs.csv",
+    index=False
+)
