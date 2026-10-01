@@ -1,0 +1,68 @@
+ae_raw = pd.read_csv(
+    "data/raw/adverse_events.csv",
+    parse_dates=[
+        "START_DATE",
+        "END_DATE"
+    ]
+)
+
+ae = ae_raw.merge(
+    dm[
+        ["SUBJID", "USUBJID"]
+    ],
+    on="SUBJID",
+    how="left"
+)
+
+ae["STUDYID"] = STUDYID
+ae["DOMAIN"] = "AE"
+
+ae["AETERM"] = ae["AE_TERM"]
+
+# Portfolio-only simplified coding.
+# Not a MedDRA dictionary.
+ae["AEDECOD"] = (
+    ae["AE_TERM"]
+    .str.upper()
+)
+
+ae["AESEV"] = (
+    ae["SEVERITY"]
+    .str.upper()
+)
+
+ae["AESTDTC"] = ae[
+    "START_DATE"
+].apply(iso_date)
+
+ae["AEENDTC"] = ae[
+    "END_DATE"
+].apply(iso_date)
+
+ae = ae.sort_values(
+    ["USUBJID", "START_DATE"]
+)
+
+ae["AESEQ"] = (
+    ae.groupby("USUBJID")
+    .cumcount() + 1
+)
+
+ae = ae[
+    [
+        "STUDYID",
+        "DOMAIN",
+        "USUBJID",
+        "AESEQ",
+        "AETERM",
+        "AEDECOD",
+        "AESEV",
+        "AESTDTC",
+        "AEENDTC"
+    ]
+]
+
+ae.to_csv(
+    "data/sdtm/ae.csv",
+    index=False
+)
