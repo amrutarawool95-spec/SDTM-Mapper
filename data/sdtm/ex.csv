@@ -1,0 +1,74 @@
+ex = ex_raw.merge(
+    dm[
+        ["SUBJID", "USUBJID", "RFSTDTC"]
+    ],
+    on="SUBJID",
+    how="left"
+)
+
+ex["STUDYID"] = STUDYID
+ex["DOMAIN"] = "EX"
+
+ex["EXTRT"] = (
+    ex["TREATMENT"].str.upper()
+)
+
+ex["EXDOSE"] = ex["DOSE"]
+
+ex["EXDOSU"] = ex["UNIT"]
+
+ex["EXDOSFRQ"] = ex["FREQUENCY"]
+
+ex["EXROUTE"] = ex["ROUTE"]
+
+ex["EXSTDTC"] = ex[
+    "START_DATE"
+].apply(iso_date)
+
+ex["EXENDTC"] = ex[
+    "END_DATE"
+].apply(iso_date)
+
+ex["EXSTDY"] = ex.apply(
+    lambda r: study_day(
+        r["START_DATE"],
+        r["RFSTDTC"]
+    ),
+    axis=1
+)
+
+ex["EXENDY"] = ex.apply(
+    lambda r: study_day(
+        r["END_DATE"],
+        r["RFSTDTC"]
+    ),
+    axis=1
+)
+
+ex["EXSEQ"] = (
+    ex.groupby("USUBJID")
+    .cumcount() + 1
+)
+
+ex = ex[
+    [
+        "STUDYID",
+        "DOMAIN",
+        "USUBJID",
+        "EXSEQ",
+        "EXTRT",
+        "EXDOSE",
+        "EXDOSU",
+        "EXDOSFRQ",
+        "EXROUTE",
+        "EXSTDTC",
+        "EXENDTC",
+        "EXSTDY",
+        "EXENDY"
+    ]
+]
+
+ex.to_csv(
+    "data/sdtm/ex.csv",
+    index=False
+)
