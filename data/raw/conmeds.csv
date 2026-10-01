@@ -1,0 +1,44 @@
+medications = [
+    "Amlodipine",
+    "Losartan",
+    "Atorvastatin",
+    "Metformin",
+    "Aspirin"
+]
+
+cm_rows = []
+
+for _, subject in dm_raw.iterrows():
+
+    if random.random() < 0.5:
+
+        start = pd.to_datetime(
+            subject["ICF_DATE"]
+        ) - timedelta(
+            days=random.randint(0, 30)
+        )
+
+        end = start + timedelta(
+            days=random.randint(30, 180)
+        )
+
+        cm_rows.append({
+            "SUBJID": subject["SUBJID"],
+            "MEDICATION": random.choice(medications),
+            "DOSE": random.choice([5, 10, 20, 50, 100]),
+            "UNIT": "mg",
+            "FREQUENCY": random.choice([
+                "QD",
+                "BID"
+            ]),
+            "START_DATE": start,
+            "END_DATE": end,
+            "ROUTE": "ORAL"
+        })
+
+cm_raw = pd.DataFrame(cm_rows)
+
+cm_raw.to_csv(
+    "data/raw/conmeds.csv",
+    index=False
+)
