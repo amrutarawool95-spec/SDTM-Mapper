@@ -1,0 +1,65 @@
+vs_rows = []
+
+for _, visit in visits_raw.iterrows():
+
+    sbp = round(np.random.normal(135, 15), 0)
+
+    dbp = round(np.random.normal(85, 10), 0)
+
+    pulse = round(np.random.normal(72, 8), 0)
+
+    weight = round(
+        np.random.normal(75, 12),
+        1
+    )
+
+    vs_rows.extend([
+
+        {
+            "SUBJID": visit["SUBJID"],
+            "VISIT": visit["VISIT"],
+            "VISITNUM": visit["VISITNUM"],
+            "VS_DATE": visit["VISIT_DATE"],
+            "TEST": "Systolic Blood Pressure",
+            "RESULT": sbp,
+            "UNIT": "mmHg"
+        },
+
+        {
+            "SUBJID": visit["SUBJID"],
+            "VISIT": visit["VISIT"],
+            "VISITNUM": visit["VISITNUM"],
+            "VS_DATE": visit["VISIT_DATE"],
+            "TEST": "Diastolic Blood Pressure",
+            "RESULT": dbp,
+            "UNIT": "mmHg"
+        },
+
+        {
+            "SUBJID": visit["SUBJID"],
+            "VISIT": visit["VISIT"],
+            "VISITNUM": visit["VISITNUM"],
+            "VS_DATE": visit["VISIT_DATE"],
+            "TEST": "Pulse Rate",
+            "RESULT": pulse,
+            "UNIT": "beats/min"
+        },
+
+        {
+            "SUBJID": visit["SUBJID"],
+            "VISIT": visit["VISIT"],
+            "VISITNUM": visit["VISITNUM"],
+            "VS_DATE": visit["VISIT_DATE"],
+            "TEST": "Weight",
+            "RESULT": weight,
+            "UNIT": "kg"
+        }
+
+    ])
+
+vs_raw = pd.DataFrame(vs_rows)
+
+vs_raw.to_csv(
+    "data/raw/vitals.csv",
+    index=False
+)
